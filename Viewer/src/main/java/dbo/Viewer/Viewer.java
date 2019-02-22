@@ -37,6 +37,7 @@ public class Viewer extends JFrame {
 	int rangeRadius = 5000;
 	FileOpener files = new FileOpener();
 	MarkerPanel markers;
+	EmotionPanel emotion;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -65,7 +66,6 @@ public class Viewer extends JFrame {
 			System.exit(0);
 		}
 
-//		final DisplayGraph graph = new DisplayGraph("convertedEcg1548081379786.tsv") {
 		final DisplayGraph graph = new DisplayGraph(files.getFileByPrefix("convertedEcg")) {
 			/**
 			 * 
@@ -153,6 +153,11 @@ public class Viewer extends JFrame {
 				return currTime;
 			}
 		};
+		
+		File[] f = new File[1];
+		f[0] = new File("webcam1548081404991.mp4.emotion.tsv");
+		String[] s = {"Affectiva"};
+		emotion = new EmotionPanel(f, s);
 
 		// Videos panel = cam / screen
 		JSplitPane splitPanelVideos = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -163,14 +168,14 @@ public class Viewer extends JFrame {
 		// GraEmo panel = ECG graphs / emotions
 		JSplitPane splitPanelGraEmo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPanelGraEmo.setLeftComponent(graph);
-		splitPanelGraEmo.setRightComponent(new JLabel("Emotions", SwingConstants.CENTER));
+		splitPanelGraEmo.setRightComponent(emotion);
 		splitPanelGraEmo.setResizeWeight(0.5);
 
 		// Output panel = Videos / graphs and emotions
 		JSplitPane splitPanelOutput = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		splitPanelOutput.setLeftComponent(splitPanelVideos);
-		splitPanelOutput.setRightComponent(graph);
-//		splitPanelOutput.setRightComponent(splitPanelGraEmo);
+//		splitPanelOutput.setRightComponent(graph);
+		splitPanelOutput.setRightComponent(splitPanelGraEmo);
 //		splitPanelOutput.setResizeWeight(0.5);
 
 		// Bar Panel
@@ -208,13 +213,10 @@ public class Viewer extends JFrame {
 		this.setVisible(true);
 
 		// Load Videos
-//		videos[0].prepareVideo("webcam1548081404991.mp4");
-//		videos[1].prepareVideo("print1548081398095.mp4");
 		videos[0].prepareVideo(files.getFileByPrefix("webcam").getAbsolutePath());
 		videos[1].prepareVideo(files.getFileByPrefix("print").getAbsolutePath());
 
 		// Intialize Synchronization
-//		long[] durations = { videos[0].getLength(), videos[1].getLength(), files.getDurationByPrefix("convertedEcg") };//2933500L
 		long[] durations = { videos[0].getLength(), videos[1].getLength(), graph.getDuration() };
 		long[] initialTimestamps = { files.getTimestampByPrefix("webcam"), files.getTimestampByPrefix("print"),
 				files.getTimestampByPrefix("convertedEcg") };
