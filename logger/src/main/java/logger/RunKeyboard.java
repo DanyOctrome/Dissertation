@@ -17,7 +17,12 @@ public class RunKeyboard {
 	private static PrintWriter pw;
 
 	public static void main(String[] args) throws IOException {
-		final File f = new File("logs/keyboard" + System.currentTimeMillis() + ".tsv");
+		String folderName = "logs";
+		if (args.length!=0) {
+			folderName = args[0];
+		}
+		
+		final File f = new File(folderName + "/keyboard" + System.currentTimeMillis() + ".tsv");
 		f.getParentFile().mkdirs(); 
 		if (f.createNewFile() == false) {
 			System.err.println("File already exists, exiting...");

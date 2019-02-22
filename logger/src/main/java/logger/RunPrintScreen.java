@@ -16,7 +16,12 @@ public class RunPrintScreen {
 		boolean run = true;
 		int period = 333;
 		
-		String filePath = "logs/screen" + System.currentTimeMillis() + '/';
+		String folderName = "logs";
+		if (args.length!=0) {
+			folderName = args[0];
+		}
+		
+		String filePath = folderName + "/screen" + System.currentTimeMillis() + '/';
 		new File(filePath).mkdirs();
 
 		Rectangle rec = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());

@@ -17,7 +17,12 @@ public class RunMouse {
 	private static PrintWriter pw;
 
 	public static void main(String[] args) throws IOException, InterruptedException {
-		final File f = new File("logs/mouse" + System.currentTimeMillis() + ".tsv");
+		String folderName = "logs";
+		if (args.length!=0) {
+			folderName = args[0];
+		}
+		
+		final File f = new File(folderName + "/mouse" + System.currentTimeMillis() + ".tsv");
 		f.getParentFile().mkdirs(); 
 		if (f.createNewFile() == false) {
 			System.err.println("File already exists, exiting...");

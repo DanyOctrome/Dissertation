@@ -39,11 +39,16 @@ public class PrintApp {
 
 		final Rational framerate = Rational.make(1, 3); // 3 frames per second
 
+		String folderName = "logs";
+		if (args.length!=0) {
+			folderName = args[0];
+		}
+		
 		// Create folder
-		f = new File("logs");
+		f = new File(folderName);
 		f.mkdirs();
 
-		final Muxer muxer = Muxer.make("logs/print" + System.currentTimeMillis() + ".mp4", null, "mp4");
+		final Muxer muxer = Muxer.make(folderName + "/print" + System.currentTimeMillis() + ".mp4", null, "mp4");
 
 		final MuxerFormat format = muxer.getFormat();
 		final Codec codec;

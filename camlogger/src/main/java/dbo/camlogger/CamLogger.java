@@ -29,13 +29,18 @@ public class CamLogger {
 		Scanner sc = new Scanner(System.in);
 		File f;
 		Dimension size = WebcamResolution.QVGA.getSize();
+		String folderName = "logs";
+		
 		// Dimension size = WebcamResolution.HD.getSize();
 		@SuppressWarnings("unused")
 		String codecname = null;
 		int duration = 36000; //recording stops after 10 hours
 
 		// Create folder
-		f = new File("logs");
+		if (args.length != 0) {
+			folderName = args[0];
+		}
+		f = new File(folderName);
 		f.mkdirs();
 
 		// Create webcam
@@ -67,7 +72,7 @@ public class CamLogger {
 
 		final Rational framerate = Rational.make(1, 30); // 30 fps
 		long initialTimestamp = System.currentTimeMillis();
-		final Muxer muxer = Muxer.make("logs/webcam" + initialTimestamp + ".mp4", null, "mp4");
+		final Muxer muxer = Muxer.make(folderName + "/webcam" + initialTimestamp + ".mp4", null, "mp4");
 		
 
 		/**
