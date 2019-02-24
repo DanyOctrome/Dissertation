@@ -1,6 +1,9 @@
 package dbo.Viewer;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -8,13 +11,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.ValueMarker;
 import org.jfree.chart.plot.XYPlot;
+import org.jfree.data.Range;
 import org.jfree.data.xy.DefaultXYDataset;
 
 public class EmotionGraph extends JPanel {
@@ -30,7 +38,11 @@ public class EmotionGraph extends JPanel {
 	JFreeChart chart;
 	final ChartPanel chartPanel;
 	final XYPlot plot;
-	int breaki;
+	ValueMarker marker;
+	int rangeRadius = 5000;
+
+	boolean autoTimestamp = false;
+	long initialTimestamp = 0;
 
 //	public EmotionGraph(String fileName, int[] ignoreCols) {
 //		this(new File(fileName), ignoreCols)
@@ -43,7 +55,9 @@ public class EmotionGraph extends JPanel {
 	public EmotionGraph(File file) throws IOException {
 		readFile(file);
 		
-		chart = ChartFactory.createXYLineChart("ECG Input", "Timestamp", "ECG Value", dataset, PlotOrientation.VERTICAL,
+		this.setLayout(new BorderLayout());
+		
+		chart = ChartFactory.createXYLineChart("Emotion Values", "Timestamp", "Value", dataset, PlotOrientation.VERTICAL,
 				true, true, false);
 
 		plot = chart.getXYPlot();
@@ -51,14 +65,60 @@ public class EmotionGraph extends JPanel {
 		plot.setDomainGridlinePaint(Color.white);
 		plot.setRangeGridlinePaint(Color.white);
 
-//		marker = new ValueMarker(0);
-//		marker.setPaint(Color.blue);
-//		marker.setLabel("Current Timestamp");
-//		plot.addDomainMarker(marker);
+		marker = new ValueMarker(0);
+		marker.setPaint(Color.blue);
+		marker.setLabel("Current Timestamp");
+		plot.addDomainMarker(marker);
 
 		chartPanel = new ChartPanel(chart);
 		
-		/* Add elements */
+//		/* Create the Input */
+//		JButton setButton = new JButton("Set Timestamp");
+//		JButton getButton = new JButton("Get Current Timestamp");
+//		final JToggleButton autoButton = new JToggleButton("Auto Mode");
+//		final JTextField textField = new JTextField(14);
+//
+//		/* Set the properties of Input */
+//		setButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent event) {
+//				try {
+//					setMarkerValue(Double.parseDouble(textField.getText()), rangeRadius);
+//				} catch (Exception e) {
+//
+//				}
+//
+//			}
+//		});
+//		getButton.addActionListener(new ActionListener() {
+//
+//			public void actionPerformed(ActionEvent event) {
+//				try {
+//					textField.setText(Long.toString(getCurrentConvertedSynchronizedTimestamp() + initialTimestamp));
+//				} catch (Exception e) {
+//
+//				}
+//			}
+//		});
+//		autoButton.setSelected(autoTimestamp);
+//		autoButton.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent event) {
+//				if (autoButton.isSelected()) {
+//					autoTimestamp = true;
+//				} else {
+//					autoTimestamp = false;
+//				}
+//			}
+//
+//		});
+//
+//		/* Add input to the panel */
+//		JPanel inputPanel = new JPanel();
+//		inputPanel.add(textField);
+//		inputPanel.add(setButton);
+//		inputPanel.add(getButton);
+//		inputPanel.add(autoButton);
+
+		/* Add the elements */
 		this.add(chartPanel);
 	}
 
@@ -106,7 +166,6 @@ public class EmotionGraph extends JPanel {
 		/* Populate array */ //TODO: remove hardcode on numVars
 		double[][][] temp = new double[numVars-5][2][numLines];
 		for (int i = 0; i < numVars-5; i++) {
-			breaki =i;
 			for (int j = 0; j < numLines; j++) {
 				temp[i][0][j] = values.get(0).get(j);
 				temp[i][1][j] = values.get(i + 1).get(j);
@@ -120,5 +179,17 @@ public class EmotionGraph extends JPanel {
 			dataset.addSeries(variables[i], data);
 			i++;
 		}
+	}
+
+	
+	/**
+	 * Sets the marker value
+	 * 
+	 * @param value
+	 * @param rangeRadius
+	 */
+	public void setMarkerValue(double value, int rangeRadius) {
+		marker.setValue(value);
+		plot.getDomainAxis().setRange(new Range(value - rangeRadius, value + rangeRadius));
 	}
 }

@@ -37,7 +37,7 @@ public class Viewer extends JFrame {
 	int rangeRadius = 5000;
 	FileOpener files = new FileOpener();
 	MarkerPanel markers;
-	EmotionPanel emotion;
+//	EmotionPanel emotion;
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
@@ -154,10 +154,10 @@ public class Viewer extends JFrame {
 			}
 		};
 		
-		File[] f = new File[1];
-		f[0] = new File("webcam1548081404991.mp4.emotion.tsv");
-		String[] s = {"Affectiva"};
-		emotion = new EmotionPanel(f, s);
+//		File[] f = new File[1];
+//		f[0] = new File("webcam1548081404991.mp4.emotion.tsv");
+//		String[] s = {"Affectiva"};
+//		emotion = new EmotionPanel(f, s);
 
 		// Videos panel = cam / screen
 		JSplitPane splitPanelVideos = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -168,14 +168,14 @@ public class Viewer extends JFrame {
 		// GraEmo panel = ECG graphs / emotions
 		JSplitPane splitPanelGraEmo = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPanelGraEmo.setLeftComponent(graph);
-		splitPanelGraEmo.setRightComponent(emotion);
+//		splitPanelGraEmo.setRightComponent(emotion);
 		splitPanelGraEmo.setResizeWeight(0.5);
 
 		// Output panel = Videos / graphs and emotions
 		JSplitPane splitPanelOutput = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 		splitPanelOutput.setLeftComponent(splitPanelVideos);
-//		splitPanelOutput.setRightComponent(graph);
-		splitPanelOutput.setRightComponent(splitPanelGraEmo);
+		splitPanelOutput.setRightComponent(graph);
+//		splitPanelOutput.setRightComponent(splitPanelGraEmo);
 //		splitPanelOutput.setResizeWeight(0.5);
 
 		// Bar Panel
