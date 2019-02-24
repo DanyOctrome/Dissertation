@@ -11,7 +11,7 @@ public class Converter {
 	String fileName;
 
 	public static void main(String[] args) throws IOException {
-		new Converter("ecg1548008760028.tsv").convert("convertedEcg1548008760028.tsv");
+		new Converter("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync\\ecg1550926107048.tsv").convert("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync\\convertedEcg1550926107048.tsv");
 
 	}
 
@@ -46,6 +46,9 @@ public class Converter {
 		currentTimestamp = Long.parseLong(splitLine[0]);
 		
 		for (int i = 1; i < splitLine.length; i++) {
+			if (i != 1) {
+				pw.write("\n");
+			}
 			pw.write(currentTimestamp + "\t");
 			currentTimestamp += 2; // 2 because the frequency is 500 per second
 			pw.write(index++ + "\t");

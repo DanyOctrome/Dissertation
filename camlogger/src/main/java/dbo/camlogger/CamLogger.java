@@ -30,11 +30,13 @@ public class CamLogger {
 		File f;
 		Dimension size = WebcamResolution.QVGA.getSize();
 		String folderName = "logs";
-		
+		boolean firstFrame = true;
+		long delay = 0;
+
 		// Dimension size = WebcamResolution.HD.getSize();
 		@SuppressWarnings("unused")
 		String codecname = null;
-		int duration = 36000; //recording stops after 10 hours
+		int duration = 36000; // recording stops after 10 hours
 
 		// Create folder
 		if (args.length != 0) {
@@ -73,7 +75,6 @@ public class CamLogger {
 		final Rational framerate = Rational.make(1, 30); // 30 fps
 		long initialTimestamp = System.currentTimeMillis();
 		final Muxer muxer = Muxer.make(folderName + "/webcam" + initialTimestamp + ".mp4", null, "mp4");
-		
 
 		/**
 		 * Now, we need to decide what type of codec to use to encode video. Muxers have
@@ -146,10 +147,15 @@ public class CamLogger {
 		 * then write out any resulting packets.
 		 */
 		final MediaPacket packet = MediaPacket.make();
-		System.out.println("Recording started, press [ENTER] to save and quit.\nWARNING: Closing the window won't save the recording!!!");
+		System.out.println(
+				"Recording started, press [ENTER] to save and quit.\nWARNING: Closing the window won't save the recording!!!");
 		for (int i = 0; (i < duration / framerate.getDouble()) && (!bufferedReader.ready()); i++) {
 			/** Make the screen capture && convert image to TYPE_3BYTE_BGR */
 			final BufferedImage screen = convertToType(webcam.getImage(), BufferedImage.TYPE_3BYTE_BGR);
+			if (firstFrame) {
+				delay = System.currentTimeMillis() - initialTimestamp;
+				firstFrame = false;
+			}
 
 			/**
 			 * This is LIKELY not in YUV420P format, so we're going to convert it using some
@@ -182,6 +188,12 @@ public class CamLogger {
 
 		/** Finally, let's clean up after ourselves. */
 		muxer.close();
+
+		/* Add the delay to the filename */
+		new File(folderName + "/webcam" + initialTimestamp + ".mp4")
+				.renameTo(new File(folderName + "/webcam" + (initialTimestamp + delay) + ".mp4"));
+		System.out.println("Delay (" + delay + ") added to the initial timestmap (" + initialTimestamp + ").");
+		System.out.println("Recording completed, you may now close the window.");
 	}
 
 	public static BufferedImage convertToType(BufferedImage sourceImage, int targetType) {

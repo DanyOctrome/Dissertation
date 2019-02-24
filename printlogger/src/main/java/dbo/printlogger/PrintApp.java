@@ -33,6 +33,7 @@ public class PrintApp {
 		String codecname = null;
 		int duration = 36000; // recording stops after 10 hours
 
+		long delay = 0;
 		final Robot robot = new Robot();
 		final Toolkit toolkit = Toolkit.getDefaultToolkit();
 		final Rectangle screenbounds = new Rectangle(toolkit.getScreenSize());
@@ -40,15 +41,16 @@ public class PrintApp {
 		final Rational framerate = Rational.make(1, 3); // 3 frames per second
 
 		String folderName = "logs";
-		if (args.length!=0) {
+		if (args.length != 0) {
 			folderName = args[0];
 		}
-		
+
 		// Create folder
 		f = new File(folderName);
 		f.mkdirs();
 
-		final Muxer muxer = Muxer.make(folderName + "/print" + System.currentTimeMillis() + ".mp4", null, "mp4");
+		long initialTimestamp = System.currentTimeMillis();
+		final Muxer muxer = Muxer.make(folderName + "/print" + initialTimestamp + ".mp4", null, "mp4");
 
 		final MuxerFormat format = muxer.getFormat();
 		final Codec codec;
@@ -86,13 +88,21 @@ public class PrintApp {
 
 		InputStreamReader fileInputStream = new InputStreamReader(System.in);
 		BufferedReader bufferedReader = new BufferedReader(fileInputStream);
-		
+
 		final MediaPacket packet = MediaPacket.make();
-		System.out.println("Recording started, press [ENTER] to save and quit.\nWARNING: Closing the window won't save the recording!!!");
+		boolean firstFrame = true;
+
+		System.out.println(
+				"Recording started, press [ENTER] to save and quit.\nWARNING: Closing the window won't save the recording!!!");
 		for (int i = 0; (i < duration / framerate.getDouble()) && (!bufferedReader.ready()); i++) {
 			/** Make the screen capture && convert image to TYPE_3BYTE_BGR */
 			final BufferedImage screen = convertToType(robot.createScreenCapture(screenbounds),
 					BufferedImage.TYPE_3BYTE_BGR);
+
+			if (firstFrame) {
+				delay = System.currentTimeMillis() - initialTimestamp;
+				firstFrame = false;
+			}
 
 			/**
 			 * This is LIKELY not in YUV420P format, so we're going to convert it using some
@@ -126,28 +136,29 @@ public class PrintApp {
 
 		/** Finally, let's clean up after ourselves. */
 		muxer.close();
+		
+		/* Add the delay to the filename */
+		new File(folderName + "/print" + initialTimestamp + ".mp4").renameTo(new File(folderName + "/print" + (initialTimestamp + delay) + ".mp4"));
+		System.out.println("Delay (" + delay + ") added to the initial timestmap ("  + initialTimestamp + ").");
+		System.out.println("Recording completed, you may now close the window.");
 	}
-	
-	public static BufferedImage convertToType(BufferedImage sourceImage,
-		      int targetType)
-		  {
-		    BufferedImage image;
 
-		    // if the source image is already the target type, return the source image
+	public static BufferedImage convertToType(BufferedImage sourceImage, int targetType) {
+		BufferedImage image;
 
-		    if (sourceImage.getType() == targetType)
-		      image = sourceImage;
+		// if the source image is already the target type, return the source image
 
-		    // otherwise create a new image of the target type and draw the new
-		    // image
+		if (sourceImage.getType() == targetType)
+			image = sourceImage;
 
-		    else
-		    {
-		      image = new BufferedImage(sourceImage.getWidth(),
-		          sourceImage.getHeight(), targetType);
-		      image.getGraphics().drawImage(sourceImage, 0, 0, null);
-		    }
+		// otherwise create a new image of the target type and draw the new
+		// image
 
-		    return image;
-		  }
+		else {
+			image = new BufferedImage(sourceImage.getWidth(), sourceImage.getHeight(), targetType);
+			image.getGraphics().drawImage(sourceImage, 0, 0, null);
+		}
+
+		return image;
+	}
 }
