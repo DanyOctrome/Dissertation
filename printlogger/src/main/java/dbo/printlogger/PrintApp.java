@@ -29,7 +29,6 @@ public class PrintApp {
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws AWTException, InterruptedException, IOException {
 		File f;
-		@SuppressWarnings("unused")
 		String codecname = null;
 		int duration = 36000; // recording stops after 10 hours
 

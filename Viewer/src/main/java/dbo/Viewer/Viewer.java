@@ -18,7 +18,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JSplitPane;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import uk.co.caprica.vlcj.player.MediaPlayer;

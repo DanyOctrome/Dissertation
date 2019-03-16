@@ -11,7 +11,7 @@ public class Converter {
 	String fileName;
 
 	public static void main(String[] args) throws IOException {
-		new Converter("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync\\ecg1550926107048.tsv").convert("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync\\convertedEcg1550926107048.tsv");
+		new Converter("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\ecg1551025613609.tsv").convert("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\convertedEcg1551025613609.tsv");
 
 	}
 
