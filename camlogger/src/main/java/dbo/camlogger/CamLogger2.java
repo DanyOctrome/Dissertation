@@ -29,7 +29,7 @@ public class CamLogger2 {
 		long delay = 0L;
 		int fps = 15;
 		int longProcessingCount = 0;
-
+		
 		// Create folder
 		if (args.length != 0) {
 			folderName = args[0];
@@ -49,7 +49,7 @@ public class CamLogger2 {
 		long initialTimestamp = System.currentTimeMillis();
 		File file = new File(folderName + "/webcam" + initialTimestamp + ".ts");
 
-		IMediaWriter writer = ToolFactory.makeWriter(file.getName());
+		IMediaWriter writer = ToolFactory.makeWriter(file.getAbsolutePath());
 		Dimension size = WebcamResolution.QVGA.getSize();
 
 		writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_H264, size.width, size.height);
@@ -88,7 +88,7 @@ public class CamLogger2 {
 				longProcessingCount++;
 			}
 		}
-
+		writer.flush();
 		writer.close();
 
 		/* Add the delay to the filename */
