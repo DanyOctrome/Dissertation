@@ -27,15 +27,23 @@ public class CamLogger2 {
 		File f;
 		boolean firstFrame = true;
 		long delay = 0L;
-		final Rational framerate = Rational.make(1, 15); // 15 fps
+		int fps = 15;
 		int longProcessingCount = 0;
 
 		// Create folder
 		if (args.length != 0) {
 			folderName = args[0];
+			if (args.length > 2) {
+				try {
+					fps = Integer.parseInt(args[1]);
+				} catch (Exception e) {
+				}
+			}
 		}
 		f = new File(folderName);
 		f.mkdirs();
+		
+		final Rational framerate = Rational.make(1, fps);
 
 		long initialTimestamp = System.currentTimeMillis();
 		File file = new File(folderName + "/webcam" + initialTimestamp + ".ts");
@@ -48,7 +56,7 @@ public class CamLogger2 {
 		Webcam webcam = Webcam.getDefault();
 		webcam.setViewSize(size);
 		webcam.open(true);
-		
+
 		InputStreamReader fileInputStream = new InputStreamReader(System.in);
 		BufferedReader bufferedReader = new BufferedReader(fileInputStream);
 
@@ -62,7 +70,6 @@ public class CamLogger2 {
 				delay = System.currentTimeMillis() - initialTimestamp;
 				firstFrame = false;
 			}
-
 
 			BufferedImage image = ConverterFactory.convertToType(webcam.getImage(), BufferedImage.TYPE_3BYTE_BGR);
 			IConverter converter = ConverterFactory.createConverter(image, IPixelFormat.Type.YUV420P);
@@ -81,7 +88,6 @@ public class CamLogger2 {
 			}
 		}
 
-		
 		writer.close();
 
 		/* Add the delay to the filename */

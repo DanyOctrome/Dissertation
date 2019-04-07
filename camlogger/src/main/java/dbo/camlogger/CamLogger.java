@@ -33,6 +33,7 @@ public class CamLogger {
 		boolean firstFrame = true;
 		long delay = 0;
 		int longProcessingCount = 0;
+		int fps = 15;
 
 		// Dimension size = WebcamResolution.HD.getSize();
 		@SuppressWarnings("unused")
@@ -42,6 +43,12 @@ public class CamLogger {
 		// Create folder
 		if (args.length != 0) {
 			folderName = args[0];
+			if (args.length > 2) {
+				try {
+					fps = Integer.parseInt(args[1]);
+				} catch (Exception e) {
+				}
+			}
 		}
 		f = new File(folderName);
 		f.mkdirs();
@@ -73,7 +80,7 @@ public class CamLogger {
 		// webcam.setCustomViewSizes(size);
 		webcam.open(true);
 
-		final Rational framerate = Rational.make(1, 15); // fps
+		final Rational framerate = Rational.make(1, fps); // fps
 		long initialTimestamp = System.currentTimeMillis();
 		final Muxer muxer = Muxer.make(folderName + "/webcam" + initialTimestamp + ".mp4", null, "mp4");
 
