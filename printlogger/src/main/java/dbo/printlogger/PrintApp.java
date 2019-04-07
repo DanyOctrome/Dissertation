@@ -90,10 +90,13 @@ public class PrintApp {
 
 		final MediaPacket packet = MediaPacket.make();
 		boolean firstFrame = true;
-
+		long startProcessingTimestamp = 0L;
+		int longProcessingCount = 0;
+		
 		System.out.println(
 				"Recording started, press [ENTER] to save and quit.\nWARNING: Closing the window won't save the recording!!!");
 		for (int i = 0; (i < duration / framerate.getDouble()) && (!bufferedReader.ready()); i++) {
+			startProcessingTimestamp = System.currentTimeMillis();
 			/** Make the screen capture && convert image to TYPE_3BYTE_BGR */
 			final BufferedImage screen = convertToType(robot.createScreenCapture(screenbounds),
 					BufferedImage.TYPE_3BYTE_BGR);
@@ -118,7 +121,12 @@ public class PrintApp {
 			} while (packet.isComplete());
 
 			/** now we'll sleep until it's time to take the next snapshot. */
-			Thread.sleep((long) (1000 * framerate.getDouble()));
+			try {
+				Thread.sleep((long) (1000 * framerate.getDouble())
+						- (System.currentTimeMillis() - startProcessingTimestamp));
+			} catch (IllegalArgumentException e) {
+				longProcessingCount++;
+			}
 		}
 
 		/**
@@ -140,6 +148,10 @@ public class PrintApp {
 		new File(folderName + "/print" + initialTimestamp + ".mp4").renameTo(new File(folderName + "/print" + (initialTimestamp + delay) + ".mp4"));
 		System.out.println("Delay (" + delay + ") added to the initial timestmap ("  + initialTimestamp + ").");
 		System.out.println("Recording completed, you may now close the window.");
+		if (longProcessingCount > 0) {
+			System.err.println("There are " + longProcessingCount
+					+ " delayed frames in the recording. In other words, you shouldn't use this potato.");
+		}
 	}
 
 	public static BufferedImage convertToType(BufferedImage sourceImage, int targetType) {

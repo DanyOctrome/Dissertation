@@ -32,6 +32,7 @@ public class CamLogger {
 		String folderName = "logs";
 		boolean firstFrame = true;
 		long delay = 0;
+		int longProcessingCount = 0;
 
 		// Dimension size = WebcamResolution.HD.getSize();
 		@SuppressWarnings("unused")
@@ -72,7 +73,7 @@ public class CamLogger {
 		// webcam.setCustomViewSizes(size);
 		webcam.open(true);
 
-		final Rational framerate = Rational.make(1, 30); // 30 fps
+		final Rational framerate = Rational.make(1, 15); // fps
 		long initialTimestamp = System.currentTimeMillis();
 		final Muxer muxer = Muxer.make(folderName + "/webcam" + initialTimestamp + ".mp4", null, "mp4");
 
@@ -147,9 +148,11 @@ public class CamLogger {
 		 * then write out any resulting packets.
 		 */
 		final MediaPacket packet = MediaPacket.make();
+		long startProcessingTimestamp;
 		System.out.println(
 				"Recording started, press [ENTER] to save and quit.\nWARNING: Closing the window won't save the recording!!!");
 		for (int i = 0; (i < duration / framerate.getDouble()) && (!bufferedReader.ready()); i++) {
+			startProcessingTimestamp = System.currentTimeMillis();
 			/** Make the screen capture && convert image to TYPE_3BYTE_BGR */
 			final BufferedImage screen = convertToType(webcam.getImage(), BufferedImage.TYPE_3BYTE_BGR);
 			if (firstFrame) {
@@ -172,7 +175,12 @@ public class CamLogger {
 			} while (packet.isComplete());
 
 			/** now we'll sleep until it's time to take the next snapshot. */
-			Thread.sleep((long) (1000 * framerate.getDouble()));
+			try {
+				Thread.sleep((long) (1000 * framerate.getDouble())
+						- (System.currentTimeMillis() - startProcessingTimestamp));
+			} catch (IllegalArgumentException e) {
+				longProcessingCount++;
+			}
 		}
 		/**
 		 * Encoders, like decoders, sometimes cache pictures so it can do the right
@@ -194,6 +202,10 @@ public class CamLogger {
 				.renameTo(new File(folderName + "/webcam" + (initialTimestamp + delay) + ".mp4"));
 		System.out.println("Delay (" + delay + ") added to the initial timestmap (" + initialTimestamp + ").");
 		System.out.println("Recording completed, you may now close the window.");
+		if (longProcessingCount > 0) {
+			System.err.println("There are " + longProcessingCount
+					+ " delayed frames in the recording. In other words, you shouldn't use this potato.");
+		}
 	}
 
 	public static BufferedImage convertToType(BufferedImage sourceImage, int targetType) {
