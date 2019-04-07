@@ -37,6 +37,7 @@ public class CamLogger2 {
 				try {
 					fps = Integer.parseInt(args[1]);
 				} catch (Exception e) {
+					//not an int
 				}
 			}
 		}
