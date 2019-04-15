@@ -10,10 +10,8 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
-import java.net.URISyntaxException;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -364,6 +362,7 @@ public class FirstExperiment extends JFrame {
 				this.setVisible(true);
 
 				/* Open pop up with instructions */
+				instructionLabel.setText(instructions[3]);
 				JOptionPane.showMessageDialog(this, instructions[3], "Instructions", JOptionPane.PLAIN_MESSAGE);
 				pwEvents.println(System.currentTimeMillis() + "\tFourth task instructions read");
 
@@ -439,6 +438,7 @@ public class FirstExperiment extends JFrame {
 				footer.setNextEnabled(true);
 
 				/* Open pop up with instructions */
+				instructionLabel.setText(instructions[4]);
 				JOptionPane.showMessageDialog(this, instructions[4], "Instructions", JOptionPane.PLAIN_MESSAGE);
 				pwEvents.println(System.currentTimeMillis() + "\tFifth task instructions read");
 			}
