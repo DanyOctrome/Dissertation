@@ -10,8 +10,11 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Hashtable;
 import java.util.Properties;
 
@@ -129,39 +132,24 @@ public class FirstExperiment extends JFrame {
 		instructionLabel = new JLabel("Aqui vão aparecer as instruções das tarefas.");
 		instructionLabel.setHorizontalAlignment(JLabel.CENTER);
 		instructionLabel.setFont(new Font("Segoe UI", Font.PLAIN, 20));
+//		preQuest = new JEditorPane("text/html",
+//				"<html>Antes de começar por favor preencha o pré questionário clicando <a href=\""
+//						+ prop.getProperty("questionnaire.1") + "\">aqui</a>.</html>");
 		preQuest = new JEditorPane("text/html",
-				"<html>Antes de começar por favor preencha o pré questionário clicando <a href=\""
-						+ prop.getProperty("questionnaire.1") + "\">aqui</a>.</html>");
+				"<html>Antes de começar por favor preencha o pré questionário. Clique OK para abrir.</html>");
 		preQuest.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
 		preQuest.setFont(defaultFont);
 		preQuest.setEditable(false);
 		preQuest.setBackground(new JLabel().getBackground());
-		preQuest.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
-					try {
-						Desktop.getDesktop().browse(e.getURL().toURI());
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-			}
-		});
-		posQuest = new JEditorPane("text/html", "<html>Por favor preencha o questionário final clicando <a href=\""
-				+ prop.getProperty("questionnaire.2") + "\">aqui</a>.</html>");
+
+//		posQuest = new JEditorPane("text/html", "<html>Por favor preencha o questionário final clicando <a href=\""
+//				+ prop.getProperty("questionnaire.2") + "\">aqui</a>.</html>");
+		posQuest = new JEditorPane("text/html",
+				"<html>Por favor preencha o questionário final. Clique OK para abrir.</html>");
 		posQuest.putClientProperty(JEditorPane.HONOR_DISPLAY_PROPERTIES, Boolean.TRUE);
 		posQuest.setFont(defaultFont);
 		posQuest.setEditable(false);
 		posQuest.setBackground(new JLabel().getBackground());
-		posQuest.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
-					try {
-						Desktop.getDesktop().browse(e.getURL().toURI());
-					} catch (Exception e1) {
-						e1.printStackTrace();
-					}
-			}
-		});
 
 		/* Add the components */
 		this.add(writingPanel[0], BorderLayout.CENTER);
@@ -199,13 +187,15 @@ public class FirstExperiment extends JFrame {
 		pwEvents.println(idGiven + "\tID written");
 
 		/* Open pop up with questionnaire */
-		pwEvents.println(System.currentTimeMillis() + "\tPre Questionnaire opened");
 		JOptionPane.showMessageDialog(null, preQuest);
+		Desktop.getDesktop().browse(new URI(prop.getProperty("questionnaire.1")));
+		pwEvents.println(System.currentTimeMillis() + "\tPre Questionnaire opened");
+		JOptionPane.showMessageDialog(null, "Clique OK quando tiver concluído o questionário.");
 		pwEvents.println(System.currentTimeMillis() + "\tFirst task started");
 
 		/* Open pop up with instructions */
 		instructionLabel.setText(instructions[0]);
-		JOptionPane.showMessageDialog(this, instructions[0], "Instructions", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(this, instructions[0], "Instruções", JOptionPane.PLAIN_MESSAGE);
 		pwEvents.println(System.currentTimeMillis() + "\tFirst task instructions read");
 	}
 
@@ -222,7 +212,7 @@ public class FirstExperiment extends JFrame {
 
 			/* Open pop up with instructions */
 			instructionLabel.setText(instructions[1]);
-			JOptionPane.showMessageDialog(this, instructions[1], "Instructions", JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(this, instructions[1], "Instruções", JOptionPane.PLAIN_MESSAGE);
 			pwEvents.println(System.currentTimeMillis() + "\tSecond task instructions read");
 
 			/* Update UI */
@@ -288,7 +278,7 @@ public class FirstExperiment extends JFrame {
 
 				/* Open pop up with instructions */
 				instructionLabel.setText(instructions[2]);
-				JOptionPane.showMessageDialog(this, instructions[2], "Instructions", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(this, instructions[2], "Instruções", JOptionPane.PLAIN_MESSAGE);
 				pwEvents.println(System.currentTimeMillis() + "\tThird task instructions read");
 
 				/* Play sound after delay */
@@ -363,7 +353,7 @@ public class FirstExperiment extends JFrame {
 
 				/* Open pop up with instructions */
 				instructionLabel.setText(instructions[3]);
-				JOptionPane.showMessageDialog(this, instructions[3], "Instructions", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(this, instructions[3], "Instruções", JOptionPane.PLAIN_MESSAGE);
 				pwEvents.println(System.currentTimeMillis() + "\tFourth task instructions read");
 
 				/* Play sound after delay */
@@ -439,7 +429,7 @@ public class FirstExperiment extends JFrame {
 
 				/* Open pop up with instructions */
 				instructionLabel.setText(instructions[4]);
-				JOptionPane.showMessageDialog(this, instructions[4], "Instructions", JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(this, instructions[4], "Instruções", JOptionPane.PLAIN_MESSAGE);
 				pwEvents.println(System.currentTimeMillis() + "\tFifth task instructions read");
 			}
 			break;
@@ -451,8 +441,14 @@ public class FirstExperiment extends JFrame {
 			writingPanel[4].writeToFile(folderName + "/fifthtask" + participantID + ".txt");
 
 			/* Open pop up with questionnaire */
-			pwEvents.println(System.currentTimeMillis() + "\tPos Questionnaire opened");
 			JOptionPane.showMessageDialog(null, posQuest);
+			try {
+				Desktop.getDesktop().browse(new URI(prop.getProperty("questionnaire.2")));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			pwEvents.println(System.currentTimeMillis() + "\tPos Questionnaire opened");
+			JOptionPane.showMessageDialog(null, "Clique OK quando tiver concluído o questionário.");
 			pwEvents.println(System.currentTimeMillis() + "\tOpening of thank you message");
 
 			/* Open pop up with instructions */
