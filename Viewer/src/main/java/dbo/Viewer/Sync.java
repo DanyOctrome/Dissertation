@@ -51,8 +51,8 @@ public class Sync {
 	}
 
 	/**
-	 * Convert a timestamp of a source video to the synchonized timestamp in the
-	 * target video
+	 * Convert a synchronized timestamp of a source element to the synchonized
+	 * timestamp in the target element
 	 * 
 	 * @param targetElementID        ID (index of the array) of the target element
 	 * @param sourceElementID        ID (index of the array) of the source element
@@ -99,12 +99,14 @@ public class Sync {
 		boolean outside = (convertedTimestamp < 0) || (convertedTimestamp > durations[targetElementID]);
 		return new ConvertedTimestamp(convertedTimestamp, outside);
 	}
-	
+
 	/**
-	 * Gets the ID of the element that the zero time coincides with the zero time of the synchronized duration
+	 * Gets the ID of the element that the zero time coincides with the zero time of
+	 * the synchronized duration
+	 * 
 	 * @return ID of the element
 	 */
-	public int getMainElementID () {
+	public int getMainElementID() {
 		return mainElement;
 	}
 }
