@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
 import net.bramp.ffmpeg.FFmpeg;
@@ -19,14 +20,16 @@ public class Converter {
 	final String ffmpegPath = "C:\\ffmpeg-20190428-45048ec-win64-static\\bin";
 	static final int numPilotos = 4;
 	static final int numTasks = 5;
+	static final String[] errorChars = { "46", "8" };
 
 	public static void main(String[] args) throws IOException {
-		boolean cut = false;
-		boolean convert = false;
+		boolean cut = true;
+		boolean convert = true;
 		boolean cutEmotion = true;
 
 //		new Converter().convertEcg("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\ecg1551025613609.tsv", "C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\convertedEcg1551025613609.tsv");
 //		new Converter().convertMouse("mouse1554805722730.tsv", "convertedMouse1554805722730.tsv");
+//		new Converter().convertKeyboard("piloto2/keyboard1554805722715.tsv", "piloto2/convertedKeyboard1554805722715.tsv");
 
 		if (cut) {
 			File mouse, keyboard, ecg, print, webcam;
@@ -40,15 +43,15 @@ public class Converter {
 			print = new File(folderName + "/print1554460598191.mp4");
 			webcam = new File(folderName + "/webcam1554460625725.mp4");
 
-			new Converter().cutTasks(1554461582836L, 1554461845333L, folderName + "/task1", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554461585527L, 1554461845333L, folderName + "/task1", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554461845335L, 1554461915635L, folderName + "/task2", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554461848543L, 1554461915635L, folderName + "/task2", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554461945708L, 1554462027165L, folderName + "/task3", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554461967239L, 1554462027165L, folderName + "/task3", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554462057209L, 1554462153226L, folderName + "/task4", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554462080494L, 1554462153226L, folderName + "/task4", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554462183272L, 1554462470931L, folderName + "/task5", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554462194808L, 1554462470931L, folderName + "/task5", mouse, keyboard, ecg, print,
 					webcam);
 			// piloto2
 			folderName = "piloto2";
@@ -58,15 +61,15 @@ public class Converter {
 			print = new File(folderName + "/print1554805726388.mp4");
 			webcam = new File(folderName + "/webcam1554805730369.mp4");
 
-			new Converter().cutTasks(1554806149591L, 1554806297600L, folderName + "/task1", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554806202789L, 1554806297600L, folderName + "/task1", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554806297600L, 1554806374191L, folderName + "/task2", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554806304613L, 1554806374191L, folderName + "/task2", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554806404215L, 1554806471812L, folderName + "/task3", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554806411948L, 1554806471812L, folderName + "/task3", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554806501823L, 1554806577887L, folderName + "/task4", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554806505220L, 1554806577887L, folderName + "/task4", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1554806607895L, 1554806905151L, folderName + "/task5", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1554806616683L, 1554806905151L, folderName + "/task5", mouse, keyboard, ecg, print,
 					webcam);
 			// piloto3
 			folderName = "piloto3";
@@ -76,15 +79,15 @@ public class Converter {
 			print = new File(folderName + "/print1556025163560.mp4");
 			webcam = new File(folderName + "/webcam1556025171426.mp4");
 
-			new Converter().cutTasks(1556025857676L, 1556026003087L, folderName + "/task1", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556025863171L, 1556026003087L, folderName + "/task1", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556026003088L, 1556026101973L, folderName + "/task2", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556026006842L, 1556026101973L, folderName + "/task2", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556026132016L, 1556026199206L, folderName + "/task3", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556026139354L, 1556026199206L, folderName + "/task3", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556026229215L, 1556026306353L, folderName + "/task4", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556026233699L, 1556026306353L, folderName + "/task4", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556026336361L, 1556026525310L, folderName + "/task5", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556026342411L, 1556026525310L, folderName + "/task5", mouse, keyboard, ecg, print,
 					webcam);
 
 			// piloto4
@@ -95,15 +98,15 @@ public class Converter {
 			print = new File(folderName + "/print1556028481251.mp4");
 			webcam = new File(folderName + "/webcam1556028488059.mp4");
 
-			new Converter().cutTasks(1556029379496L, 1556030073755L, folderName + "/task1", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556029391952L, 1556030073755L, folderName + "/task1", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556030073756L, 1556030143275L, folderName + "/task2", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556030078846L, 1556030143275L, folderName + "/task2", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556030173294L, 1556030237202L, folderName + "/task3", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556030177352L, 1556030237202L, folderName + "/task3", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556030267209L, 1556030342165L, folderName + "/task4", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556030269513L, 1556030342165L, folderName + "/task4", mouse, keyboard, ecg, print,
 					webcam);
-			new Converter().cutTasks(1556030372173L, 1556030829483L, folderName + "/task5", mouse, keyboard, ecg, print,
+			new Converter().cutTasks(1556030385231L, 1556030829483L, folderName + "/task5", mouse, keyboard, ecg, print,
 					webcam);
 		}
 
@@ -122,27 +125,27 @@ public class Converter {
 
 			folderName = "piloto2";
 			emotion = new File(folderName + "/webcam1554805730369.mp4.emotion.tsv");
-			new Converter().cutEmotion(1554806149591L, 1554806297600L, folderName + "/task1", emotion);
-			new Converter().cutEmotion(1554806297600L, 1554806374191L, folderName + "/task2", emotion);
-			new Converter().cutEmotion(1554806404215L, 1554806471812L, folderName + "/task3", emotion);
-			new Converter().cutEmotion(1554806501823L, 1554806577887L, folderName + "/task4", emotion);
-			new Converter().cutEmotion(1554806607895L, 1554806905151L, folderName + "/task5", emotion);
+			new Converter().cutEmotion(1554806202789L, 1554806297600L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1554806304613L, 1554806374191L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1554806411948L, 1554806471812L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1554806505220L, 1554806577887L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1554806616683L, 1554806905151L, folderName + "/task5", emotion);
 
 			folderName = "piloto3";
 			emotion = new File(folderName + "/webcam1556025171426.mp4.emotion.tsv");
-			new Converter().cutEmotion(1556025857676L, 1556026003087L, folderName + "/task1", emotion);
-			new Converter().cutEmotion(1556026003088L, 1556026101973L, folderName + "/task2", emotion);
-			new Converter().cutEmotion(1556026132016L, 1556026199206L, folderName + "/task3", emotion);
-			new Converter().cutEmotion(1556026229215L, 1556026306353L, folderName + "/task4", emotion);
-			new Converter().cutEmotion(1556026336361L, 1556026525310L, folderName + "/task5", emotion);
+			new Converter().cutEmotion(1556025863171L, 1556026003087L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1556026006842L, 1556026101973L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1556026139354L, 1556026199206L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1556026233699L, 1556026306353L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1556026342411L, 1556026525310L, folderName + "/task5", emotion);
 
 			folderName = "piloto4";
 			emotion = new File(folderName + "/webcam1556028488059.mp4.emotion.tsv");
-			new Converter().cutEmotion(1556029379496L, 1556030073755L, folderName + "/task1", emotion);
-			new Converter().cutEmotion(1556030073756L, 1556030143275L, folderName + "/task2", emotion);
-			new Converter().cutEmotion(1556030173294L, 1556030237202L, folderName + "/task3", emotion);
-			new Converter().cutEmotion(1556030267209L, 1556030342165L, folderName + "/task4", emotion);
-			new Converter().cutEmotion(1556030372173L, 1556030829483L, folderName + "/task5", emotion);
+			new Converter().cutEmotion(1556029391952L, 1556030073755L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1556030078846L, 1556030143275L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1556030177352L, 1556030237202L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1556030269513L, 1556030342165L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1556030385231L, 1556030829483L, folderName + "/task5", emotion);
 
 		}
 	}
@@ -291,8 +294,79 @@ public class Converter {
 				sec = calendar.get(Calendar.SECOND);
 
 				/* write */
+				String velocityString = Double.isInfinite(velocity) ? "NaN" : String.valueOf(velocity);
 				pw.write("\n" + fullLine + "\t" + hour + "\t" + min + "\t" + sec + "\t" + distance + "\t" + accDistance
-						+ "\t" + velocity);
+						+ "\t" + velocityString);
+			}
+		}
+
+		br.close();
+		pw.close();
+		return true;
+	}
+
+	public boolean convertKeyboard(String keyboardFileName, String targetFileName) throws IOException {
+		PrintWriter pw;
+		BufferedReader br;
+
+		File input = new File(keyboardFileName);
+		br = new BufferedReader(new FileReader(input));
+
+		File output = new File(targetFileName);
+		// output.getParentFile().mkdirs();
+		if (output.createNewFile() == false) {
+			System.err.println("File already exists, exiting...");
+			br.close();
+			return false;
+		}
+		pw = new PrintWriter(new FileWriter(output), true);
+
+		String fullLine;
+		String[] splitLine;
+		boolean loop = true;
+		long currentTimestamp, lastTimestamp = 0;
+		String keyDelay = "NaN", releaseDelay = "NaN";
+		int numError = 0, numStrokes = 0;
+		Hashtable<String, Long> keyHistory = new Hashtable<String, Long>();
+		boolean first = true;
+
+		fullLine = br.readLine();
+		fullLine += "\tkeyDelay\treleaseDelay\tnumStrokes\tnumError";
+		pw.write(fullLine);
+
+		while (loop) {
+			fullLine = br.readLine();
+			if (fullLine == null) {
+				loop = false;
+			} else {
+				splitLine = fullLine.split("\t");
+
+				/* process values */
+				currentTimestamp = Long.parseLong(splitLine[0]);
+				if (splitLine[1].equals("keyDown")) {
+					releaseDelay = "NaN";
+					keyDelay = "NaN";
+					keyHistory.putIfAbsent(splitLine[2], currentTimestamp);
+				} else if (splitLine[1].equals("keyUp")) {
+					if (first) {
+						lastTimestamp = currentTimestamp;
+						first = false;
+					}
+					numStrokes++;
+					releaseDelay = Long.toString(currentTimestamp - keyHistory.get(splitLine[2]));
+					keyHistory.remove(splitLine[2]);
+					keyDelay = Long.toString(currentTimestamp - lastTimestamp);
+					for (String err : errorChars) {
+						if (splitLine[2] == err) {
+							numError++;
+							break;
+						}
+					}
+					lastTimestamp = currentTimestamp;
+				}
+
+				/* write */
+				pw.write("\n" + fullLine + "\t" + keyDelay + "\t" + releaseDelay + "\t" + numStrokes + "\t" + numError);
 			}
 		}
 
@@ -463,7 +537,7 @@ public class Converter {
 				.addOutput(newFolderName + "/webcam" + cutTimestampStart + ".mp4")
 //			     .setVideoCodec("copy")
 //			     .setAudioCodec("copy")
-//				.setDuration(duration, TimeUnit.MILLISECONDS)
+				.setDuration(duration, TimeUnit.MILLISECONDS)
 				.setStartOffset(cutTimestampStart - initialTimestamp, TimeUnit.MILLISECONDS).done();
 
 		FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
@@ -484,6 +558,9 @@ public class Converter {
 			} else if (fileName.startsWith("mouse")) {
 				convertMouse(f.getAbsolutePath(),
 						f.getParent() + "/converted" + fileName.substring(0, 1).toUpperCase() + fileName.substring(1));
+			} else if (fileName.startsWith("keyboard")) {
+				convertKeyboard(f.getAbsolutePath(),
+						f.getParent() + "/converted" + fileName.substring(0, 1).toUpperCase() + fileName.substring(1));
 			}
 		}
 
@@ -503,11 +580,12 @@ public class Converter {
 			return false;
 
 		br = new BufferedReader(new FileReader(emotion));
-		
+
 		// convert from absolute to relative timestamp
-		long initialTimestamp = Long.parseLong(emotion.getName().replaceAll("webcam", "").replaceAll(".mp4.emotion.tsv", ""));
-		relTimestampStart = ((double) (cutTimestampStart - initialTimestamp))/1000;
-		relTimestampEnd = ((double) (cutTimestampEnd - initialTimestamp))/1000;
+		long initialTimestamp = Long
+				.parseLong(emotion.getName().replaceAll("webcam", "").replaceAll(".mp4.emotion.tsv", ""));
+		relTimestampStart = ((double) (cutTimestampStart - initialTimestamp)) / 1000;
+		relTimestampEnd = ((double) (cutTimestampEnd - initialTimestamp)) / 1000;
 
 		File emotionOut = new File(newFolderName + "/webcam" + cutTimestampStart + ".mp4.emotion.tsv");
 		emotionOut.getParentFile().mkdirs();
@@ -525,7 +603,7 @@ public class Converter {
 		while (loop) {
 			fullLine = br.readLine();
 
-			timestamp = Double.parseDouble(fullLine.split("\t")[0].replaceAll(",","."));
+			timestamp = Double.parseDouble(fullLine.split("\t")[0].replaceAll(",", "."));
 
 			if (timestamp < relTimestampStart) {
 				continue;
