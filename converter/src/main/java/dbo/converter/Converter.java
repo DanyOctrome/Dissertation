@@ -23,12 +23,15 @@ public class Converter {
 
 	public static void main(String[] args) throws IOException {
 		boolean cut = false;
-		boolean convert = true;
+		boolean convert = false;
 		boolean cutEmotion = false;
 
 //		new Converter().convertEcg("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\ecg1551025613609.tsv", "C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\convertedEcg1551025613609.tsv");
 //		new Converter().convertMouse("mouse1554805722730.tsv", "convertedMouse1554805722730.tsv");
 //		new Converter().convertKeyboard("piloto2/keyboard1554805722715.tsv", "piloto2/convertedKeyboard1554805722715.tsv");
+		new Converter().convertMouse("piloto2/task5/mouse1554806616683.tsv", "piloto2/task5/convertedMouse1554806616683.tsv");
+		new Converter().convertKeyboard("piloto2/task5/keyboard1554806616683.tsv", "piloto2/task5/convertedKeyboard1554806616683.tsv");
+		new Converter().convertEcg("piloto2/task5/ecg1554806616683.tsv", "piloto2/task5/convertedEcg1554806616683.tsv");
 
 		if (cut) {
 			File mouse, keyboard, ecg, print, webcam;
