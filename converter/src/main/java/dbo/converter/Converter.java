@@ -2,7 +2,6 @@ package dbo.converter;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -23,9 +22,9 @@ public class Converter {
 	static final String[] errorChars = { "46", "8" };
 
 	public static void main(String[] args) throws IOException {
-		boolean cut = true;
+		boolean cut = false;
 		boolean convert = true;
-		boolean cutEmotion = true;
+		boolean cutEmotion = false;
 
 //		new Converter().convertEcg("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\ecg1551025613609.tsv", "C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\convertedEcg1551025613609.tsv");
 //		new Converter().convertMouse("mouse1554805722730.tsv", "convertedMouse1554805722730.tsv");
@@ -111,10 +110,16 @@ public class Converter {
 		}
 
 		if (convert) {
+//			for (int i = 1; i <= numPilotos; i++) { // piloto
+//				new Converter().convertFolder(new File("piloto" + i));
+//				for (int j = 1; j <= numTasks; j++) { // task
+//					new Converter().convertFolder(new File("piloto" + i + "/task" + j));
+//				}
+//			}
 			for (int i = 1; i <= numPilotos; i++) { // piloto
-				new Converter().convertFolder(new File("piloto" + i));
+				new Converter().toMatlabFolder(new File("piloto" + i));
 				for (int j = 1; j <= numTasks; j++) { // task
-					new Converter().convertFolder(new File("piloto" + i + "/task" + j));
+					new Converter().toMatlabFolder(new File("piloto" + i + "/task" + j));
 				}
 			}
 		}
@@ -619,6 +624,146 @@ public class Converter {
 		br.close();
 		pw.close();
 
+		return true;
+	}
+
+	public boolean toMatlabFolder(File folder) throws IOException {
+		for (File f : folder.listFiles()) {
+			String fileName = f.getName();
+
+			if (fileName.startsWith("convertedMouse")) {
+				toMatlabKeyboard(f.getAbsolutePath(),
+						f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase() + fileName.substring(1));
+			} else if (fileName.startsWith("convertedKeyboard")) {
+				toMatlabKeyboard(f.getAbsolutePath(),
+						f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase() + fileName.substring(1));
+			} /*else if (fileName.startsWith("convertedEcg")) {
+				toMatlabEcg(f.getAbsolutePath(),
+						f.getParent() + "/converted" + fileName.substring(0, 1).toUpperCase() + fileName.substring(1));
+			}*/
+		}
+
+		return true;
+	}
+
+	public boolean toMatlabKeyboard(String keyboardFileName, String targetFileName) throws IOException {
+		PrintWriter pw;
+		BufferedReader br;
+
+		File input = new File(keyboardFileName);
+		br = new BufferedReader(new FileReader(input));
+
+		File output = new File(targetFileName);
+		// output.getParentFile().mkdirs();
+		if (output.createNewFile() == false) {
+			System.err.println("File already exists, exiting...");
+			br.close();
+			return false;
+		}
+		pw = new PrintWriter(new FileWriter(output), true);
+
+		String fullLine;
+		String[] splitLine;
+		boolean loop = true;
+
+		br.readLine(); // ignore header
+		
+		while (loop) {
+			fullLine = br.readLine();
+			if (fullLine == null) {
+				loop = false;
+			} else {
+				splitLine = fullLine.split("\t");
+
+				pw.write(splitLine[3]);
+				for (int i = 4; i <= 9; i++)
+					pw.write("\t" + splitLine[i]);
+				pw.write("\n");
+
+			}
+		}
+
+		br.close();
+		pw.close();
+		return true;
+	}
+
+	public boolean toMatlabMouse(String mouseFileName, String targetFileName) throws IOException {
+		PrintWriter pw;
+		BufferedReader br;
+
+		File input = new File(mouseFileName);
+		br = new BufferedReader(new FileReader(input));
+
+		File output = new File(targetFileName);
+		// output.getParentFile().mkdirs();
+		if (output.createNewFile() == false) {
+			System.err.println("File already exists, exiting...");
+			br.close();
+			return false;
+		}
+		pw = new PrintWriter(new FileWriter(output), true);
+
+		String fullLine;
+		String[] splitLine;
+		boolean loop = true;
+
+		br.readLine(); // ignore header
+
+		while (loop) {
+			fullLine = br.readLine();
+			if (fullLine == null) {
+				loop = false;
+			} else {
+				splitLine = fullLine.split("\t");
+
+				pw.write(splitLine[10]);
+				for (int i = 11; i <= 12; i++)
+					pw.write("\t" + splitLine[i]);
+				pw.write("\n");
+			}
+		}
+
+		br.close();
+		pw.close();
+		return true;
+	}
+
+	public boolean toMatlabEcg(String ecgFileName, String targetFileName) throws IOException {
+		PrintWriter pw;
+		BufferedReader br;
+
+		File input = new File(ecgFileName);
+		br = new BufferedReader(new FileReader(input));
+
+		File output = new File(targetFileName);
+		// output.getParentFile().mkdirs();
+		if (output.createNewFile() == false) {
+			System.err.println("File already exists, exiting...");
+			br.close();
+			return false;
+		}
+		pw = new PrintWriter(new FileWriter(output), true);
+
+		String fullLine;
+		String[] splitLine;
+		boolean loop = true;
+
+		br.readLine(); // ignore headerw
+		
+		while (loop) {
+			fullLine = br.readLine();
+			if (fullLine == null) {
+				loop = false;
+			} else {
+				splitLine = fullLine.split("\t");
+
+				//code here
+			}
+		}
+
+		br.close();
+		pw.close();
 		return true;
 	}
 }
