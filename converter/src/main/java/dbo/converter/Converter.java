@@ -247,12 +247,21 @@ public class Converter {
 		}
 
 		if (convert) {
-			String[] folders = new String[] { /* "0010207", */ "0010306", "0010307", "0010506", "0012506", "0020306",
+			String[] folders = new String[] { "0010207", "0010306", "0010307", "0010506", "0012506", "0020306",
 					"0072907" };
+			boolean deleteExisting = true;
+
+//			for (String folder : folders) { // folders
+//				new Converter().convertFolder(new File(folder));
+//				for (int j = 1; j <= numTasks; j++) { // task
+//					new Converter().convertFolder(new File(folder + "/task" + j));
+//				}
+//			}
+
 			for (String folder : folders) { // folders
-				new Converter().convertFolder(new File(folder));
+				new Converter().toMatlabFolder(new File(folder), deleteExisting);
 				for (int j = 1; j <= numTasks; j++) { // task
-					new Converter().convertFolder(new File(folder + "/task" + j));
+					new Converter().toMatlabFolder(new File(folder + "/task" + j), deleteExisting);
 				}
 			}
 
@@ -274,29 +283,99 @@ public class Converter {
 			File emotion;
 			String folderName;
 
-			folderName = "piloto2";
-			emotion = new File(folderName + "/webcam1554805730369.mp4.emotion.tsv");
-			new Converter().cutEmotion(1554806202789L, 1554806297600L, folderName + "/task1", emotion);
-			new Converter().cutEmotion(1554806304613L, 1554806374191L, folderName + "/task2", emotion);
-			new Converter().cutEmotion(1554806411948L, 1554806471812L, folderName + "/task3", emotion);
-			new Converter().cutEmotion(1554806505220L, 1554806577887L, folderName + "/task4", emotion);
-			new Converter().cutEmotion(1554806616683L, 1554806905151L, folderName + "/task5", emotion);
+			// 0010207
+			folderName = "0010207";
+			emotion = new File(folderName + "/webcam1562073522012.mp4.emotion.tsv");
 
-			folderName = "piloto3";
-			emotion = new File(folderName + "/webcam1556025171426.mp4.emotion.tsv");
-			new Converter().cutEmotion(1556025863171L, 1556026003087L, folderName + "/task1", emotion);
-			new Converter().cutEmotion(1556026006842L, 1556026101973L, folderName + "/task2", emotion);
-			new Converter().cutEmotion(1556026139354L, 1556026199206L, folderName + "/task3", emotion);
-			new Converter().cutEmotion(1556026233699L, 1556026306353L, folderName + "/task4", emotion);
-			new Converter().cutEmotion(1556026342411L, 1556026525310L, folderName + "/task5", emotion);
+			new Converter().cutEmotion(1562074113195L, 1562074168310L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1562074175001L, 1562074235901L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1562074273059L, 1562074332925L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1562074367178L, 1562074439850L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1562074492826L, 1562074649365L, folderName + "/task5", emotion);
 
-			folderName = "piloto4";
-			emotion = new File(folderName + "/webcam1556028488059.mp4.emotion.tsv");
-			new Converter().cutEmotion(1556029391952L, 1556030073755L, folderName + "/task1", emotion);
-			new Converter().cutEmotion(1556030078846L, 1556030143275L, folderName + "/task2", emotion);
-			new Converter().cutEmotion(1556030177352L, 1556030237202L, folderName + "/task3", emotion);
-			new Converter().cutEmotion(1556030269513L, 1556030342165L, folderName + "/task4", emotion);
-			new Converter().cutEmotion(1556030385231L, 1556030829483L, folderName + "/task5", emotion);
+			// 0010306
+			folderName = "0010306";
+			emotion = new File(folderName + "/webcam1559574986889.mp4.emotion.tsv");
+
+			new Converter().cutEmotion(1559575548033L, 1559575642813L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1559575648610L, 1559575709764L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1559575751465L, 1559575811339L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1559575845421L, 1559575918094L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1559576008212L, 1559576233283L, folderName + "/task5", emotion);
+
+			// 0010307
+			folderName = "0010307";
+			emotion = new File(folderName + "/webcam1562160174906.mp4.emotion.tsv");
+
+			new Converter().cutEmotion(1562160714691L, 1562160866557L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1562160878699L, 1562160960413L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1562160999217L, 1562161059085L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1562161095298L, 1562161167963L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1562161212649L, 1562161395028L, folderName + "/task5", emotion);
+
+			// 0010506
+			folderName = "0010506";
+			emotion = new File(folderName + "/webcam1559729593507.mp4.emotion.tsv");
+
+			new Converter().cutEmotion(1559730104878L, 1559730186113L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1559730190517L, 1559730278473L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1559730318863L, 1559730378728L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1559730412229L, 1559730484894L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1559730519590L, 1559730622200L, folderName + "/task5", emotion);
+
+			// 0012506
+			folderName = "0012506";
+			emotion = new File(folderName + "/webcam1561466539926.mp4.emotion.tsv");
+
+			new Converter().cutEmotion(1561467595246L, 1561467895522L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1561467899871L, 1561467999449L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1561468036417L, 1561468096291L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1561468131638L, 1561468204308L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1561468241741L, 1561468470681L, folderName + "/task5", emotion);
+
+			// 0020306
+			folderName = "0020306";
+			emotion = new File(folderName + "/webcam1559578324832.mp4.emotion.tsv");
+
+			new Converter().cutEmotion(1559578775421L, 1559578948816L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1559578964486L, 1559579027728L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1559579068110L, 1559579127976L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1559579160133L, 1559579232799L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1559579272774L, 1559579421919L, folderName + "/task5", emotion);
+
+			// 0072907
+			folderName = "0072907";
+			emotion = new File(folderName + "/webcam1564397816232.mp4.emotion.tsv");
+
+			new Converter().cutEmotion(1564398637191L, 1564398878945L, folderName + "/task1", emotion);
+			new Converter().cutEmotion(1564398895948L, 1564398991816L, folderName + "/task2", emotion);
+			new Converter().cutEmotion(1564399032190L, 1564399092064L, folderName + "/task3", emotion);
+			new Converter().cutEmotion(1564399124569L, 1564399197242L, folderName + "/task4", emotion);
+			new Converter().cutEmotion(1564399236450L, 1564399444152L, folderName + "/task5", emotion);
+
+//			folderName = "piloto2";
+//			emotion = new File(folderName + "/webcam1554805730369.mp4.emotion.tsv");
+//			new Converter().cutEmotion(1554806202789L, 1554806297600L, folderName + "/task1", emotion);
+//			new Converter().cutEmotion(1554806304613L, 1554806374191L, folderName + "/task2", emotion);
+//			new Converter().cutEmotion(1554806411948L, 1554806471812L, folderName + "/task3", emotion);
+//			new Converter().cutEmotion(1554806505220L, 1554806577887L, folderName + "/task4", emotion);
+//			new Converter().cutEmotion(1554806616683L, 1554806905151L, folderName + "/task5", emotion);
+//
+//			folderName = "piloto3";
+//			emotion = new File(folderName + "/webcam1556025171426.mp4.emotion.tsv");
+//			new Converter().cutEmotion(1556025863171L, 1556026003087L, folderName + "/task1", emotion);
+//			new Converter().cutEmotion(1556026006842L, 1556026101973L, folderName + "/task2", emotion);
+//			new Converter().cutEmotion(1556026139354L, 1556026199206L, folderName + "/task3", emotion);
+//			new Converter().cutEmotion(1556026233699L, 1556026306353L, folderName + "/task4", emotion);
+//			new Converter().cutEmotion(1556026342411L, 1556026525310L, folderName + "/task5", emotion);
+//
+//			folderName = "piloto4";
+//			emotion = new File(folderName + "/webcam1556028488059.mp4.emotion.tsv");
+//			new Converter().cutEmotion(1556029391952L, 1556030073755L, folderName + "/task1", emotion);
+//			new Converter().cutEmotion(1556030078846L, 1556030143275L, folderName + "/task2", emotion);
+//			new Converter().cutEmotion(1556030177352L, 1556030237202L, folderName + "/task3", emotion);
+//			new Converter().cutEmotion(1556030269513L, 1556030342165L, folderName + "/task4", emotion);
+//			new Converter().cutEmotion(1556030385231L, 1556030829483L, folderName + "/task5", emotion);
 
 		}
 	}
@@ -781,21 +860,31 @@ public class Converter {
 		return true;
 	}
 
-	public boolean toMatlabFolder(File folder) throws IOException {
+	public boolean toMatlabFolder(File folder, boolean deleteExisting) throws IOException {
 		for (File f : folder.listFiles()) {
 			String fileName = f.getName();
+			String outputFileName;
 
 			if (fileName.startsWith("convertedMouse")) {
-				toMatlabKeyboard(f.getAbsolutePath(),
-						f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase() + fileName.substring(1));
+				outputFileName = f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase()
+						+ fileName.substring(1);
+				if (deleteExisting) {
+					new File(outputFileName).delete();
+				}
+				toMatlabMouse(f.getAbsolutePath(), outputFileName);
 			} else if (fileName.startsWith("convertedKeyboard")) {
-				toMatlabKeyboard(f.getAbsolutePath(),
-						f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase() + fileName.substring(1));
-			} /*
-				 * else if (fileName.startsWith("convertedEcg")) {
-				 * toMatlabEcg(f.getAbsolutePath(), f.getParent() + "/converted" +
-				 * fileName.substring(0, 1).toUpperCase() + fileName.substring(1)); }
-				 */
+				outputFileName = f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase()
+						+ fileName.substring(1);
+				if (deleteExisting) {
+					new File(outputFileName).delete();
+				}
+				toMatlabKeyboard(f.getAbsolutePath(), outputFileName);
+			}
+			/*
+			 * else if (fileName.startsWith("convertedEcg")) {
+			 * toMatlabEcg(f.getAbsolutePath(), f.getParent() + "/converted" +
+			 * fileName.substring(0, 1).toUpperCase() + fileName.substring(1)); }
+			 */
 		}
 
 		return true;
@@ -830,10 +919,12 @@ public class Converter {
 			} else {
 				splitLine = fullLine.split("\t");
 
-				pw.write(splitLine[3]);
-				for (int i = 4; i <= 9; i++)
-					pw.write("\t" + splitLine[i]);
-				pw.write("\n");
+				if (splitLine[1].equals("keyUp")) { // ignore keyDowns
+					pw.write(splitLine[3]);
+					for (int i = 4; i <= 9; i++)
+						pw.write("\t" + splitLine[i]);
+					pw.write("\n");
+				}
 
 			}
 		}
@@ -872,9 +963,6 @@ public class Converter {
 			} else {
 				splitLine = fullLine.split("\t");
 
-				pw.write(splitLine[10]);
-				for (int i = 11; i <= 12; i++)
-					pw.write("\t" + splitLine[i]);
 				pw.write("\n");
 			}
 		}
@@ -921,4 +1009,5 @@ public class Converter {
 		pw.close();
 		return true;
 	}
+
 }
