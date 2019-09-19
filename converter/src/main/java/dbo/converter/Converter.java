@@ -7,8 +7,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import net.bramp.ffmpeg.FFmpeg;
@@ -383,9 +387,9 @@ public class Converter {
 
 		if (merger) {
 			new Converter().merge("0010207/task1/convertedKeyboard1562074113195.tsv",
-					"C:\\Users\\DanyO\\Downloads\\OneDrive_2019-09-17\\Merge Data\\ECG_P0010207.csv", "output1.csv", 1);
+					"C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\dissert\\pratical\\ECG_P0010207.csv", "output1.csv", 1);
 			new Converter().merge("0010207/task2/convertedKeyboard1562074175001.tsv",
-					"C:\\Users\\DanyO\\Downloads\\OneDrive_2019-09-17\\Merge Data\\ECG_P0010207.csv", "output2.csv", 2);
+					"C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\dissert\\pratical\\ECG_P0010207.csv", "output2.csv", 2);
 		}
 	}
 
@@ -1032,72 +1036,67 @@ public class Converter {
 		String fullLineKeyboard, fullLineEcg;
 		String[] splitLineKeyboard, splitLineEcg;
 		boolean loop = true;
-		long previousTimestamp;// = Long.parseLong(keyboardBr.readLine().split("\t")[0]);
+		long previousTimestamp = 0;// = Long.parseLong(keyboardBr.readLine().split("\t")[0]);
 		long currTimestamp;
-		long ecgTimestamp;
+		long keyboardTimestamp;
 		int index = (task - 1) * 4;
 		ArrayList<String> keyboardArray = new ArrayList<String>();
 		ArrayList<String> ecgArray = new ArrayList<String>();
+		Map<Integer, ArrayList<String>> map = new HashMap<Integer, ArrayList<String>>();
 
 		// ignore headers
 		keyboardBr.readLine();
 		ecgBr.readLine();
 
-		 // store in the array
+		// store in the array
 		while ((fullLineKeyboard = keyboardBr.readLine()) != null) {
 			keyboardArray.add(fullLineKeyboard);
 		}
 		while ((fullLineEcg = ecgBr.readLine()) != null) {
 			ecgArray.add(fullLineEcg);
 		}
-		
-		// search for the closest element
+
+		// search for the closest element and save on the hashmap
 		for (String i : ecgArray) {
-			long distance = 999999999L; //this number represents the maximum distance
-			long ecgTimestamp = Long.parseLong(i);
+			long distance = 999999999L; // this number represents the maximum distance
+			currTimestamp = Long.parseLong(i.split(",")[0 + index]);
 			int closerElement = -1;
-			
-			for (String keyboardTimestamp : keyboardArray) {
-				if (Long.parseLong(keyboardTimestamp.split("\t")[0]);
-			}
-		}
-		
-			
-		//TODO:------------------------------------------------------------	
-			
-		// read first ecg timestamp
-		if ((fullLineEcg = ecgBr.readLine()) == null) {
-			loop = false;
-		}
 
-		while (((fullLineKeyboard = keyboardBr.readLine()) != null) && loop) {
-			splitLineKeyboard = fullLineKeyboard.split("\t");
-			splitLineEcg = fullLineEcg.split(",");
-
-			currTimestamp = Long.parseLong(splitLineKeyboard[0]);
-			ecgTimestamp = Long.parseLong(splitLineEcg[0 + index]);
-			if (!splitLineKeyboard[1].equals("keyUp")) {
-				continue;// ignore keyDown's
-			}
-
-			while (currTimestamp > ecgTimestamp) { // need to fetch another
-				if ((fullLineEcg = ecgBr.readLine()) != null) {
-					loop = false;
-					break;
+			for (int j = 0; j < keyboardArray.size(); j++) {
+				keyboardTimestamp = Long.parseLong(keyboardArray.get(j).split("\t")[0 + index]);
+				if (Math.abs(currTimestamp - keyboardTimestamp) < distance) {
+					closerElement = j;
+					previousTimestamp = keyboardTimestamp;
+					distance = Math.abs(currTimestamp - keyboardTimestamp);
+				} else {
+					// break; having break here speeds up but might unintentionally break on
+					// consecutive duplicate entries or somehow unsorted data
 				}
-				ecgTimestamp = Long.parseLong(splitLineEcg[0 + index]);
-			}
 
-			if (!loop) { // Problem reading the line
-				break;
+				if (closerElement == -1) {
+					try {
+						throw new IOException("Could not link ecg entry " + currTimestamp + " to the keyboard");
+					} catch (IOException e) {
+						System.err.println(e.getMessage()); // Yes, I could directly print the message but you could
+															// also shut up
+						continue;
+					}
+				}
 			}
+			map.putIfAbsent(closerElement, new ArrayList<String>());
+			map.get(closerElement).add(i);
+		}
 
-			// Write on the file
+		// save to file
+		for (int i = 0; i < keyboardArray.size(); i++) {
+			splitLineKeyboard = keyboardArray.get(i).split("\t");
+			splitLineEcg = convertMultipleLines(map.get(i));
+			
 			pw.write(splitLineKeyboard[3]);
-			for (int i = 4; i <= 9; i++)
-				pw.write("," + splitLineKeyboard[i]);
-			for (int i = 1; i <= 3; i++)
-				pw.write("," + splitLineEcg[i + index]);
+			for (int j = 4; j <= 9; j++)
+				pw.write("," + splitLineKeyboard[j]);
+			for (int j = 1; j <= 3; j++)
+				pw.write("," + splitLineEcg[j + index]);
 			pw.write("\n");
 		}
 
@@ -1107,9 +1106,37 @@ public class Converter {
 		return true;
 	}
 
-	private void parseLong(String i) {
-		// TODO Auto-generated method stub
+	/**
+	 * Makes averages
+	 * @param list
+	 * @return
+	 */
+	private String[] convertMultipleLines (ArrayList<String> list) {
+		if (list.isEmpty()) {
+			String[] split = new String[20];
+			Arrays.fill(split, "");
+			return split;
+		}
+		double[] split = new double[20];
 		
+		for (String line : list) {
+			String[] splitLine = line.split(",");
+			for (int i = 0; i < splitLine.length; i++) { //calc average
+				split[i] += Double.parseDouble(splitLine[i])/list.size();
+			}
+		}
+		
+		return doubleToStringArray(split);
+	}
+
+	private String[] doubleToStringArray (double[] array) {
+		String[] result = new String[array.length];
+		
+		for (int i = 0; i < result.length; i++) {
+			result[i] = Double.toString(array[i]);
+		}
+		
+		return result;
 	}
 
 }
