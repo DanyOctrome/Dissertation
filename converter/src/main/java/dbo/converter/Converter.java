@@ -868,6 +868,7 @@ public class Converter {
 			if (fileName.startsWith("convertedMouse")) {
 				outputFileName = f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase()
 						+ fileName.substring(1);
+				outputFileName = outputFileName.replace(".tsv", ".csv");
 				if (deleteExisting) {
 					new File(outputFileName).delete();
 				}
@@ -875,6 +876,7 @@ public class Converter {
 			} else if (fileName.startsWith("convertedKeyboard")) {
 				outputFileName = f.getParent() + "/matlab" + fileName.substring(0, 1).toUpperCase()
 						+ fileName.substring(1);
+				outputFileName = outputFileName.replace(".tsv", ".csv");
 				if (deleteExisting) {
 					new File(outputFileName).delete();
 				}
