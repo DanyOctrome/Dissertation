@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +24,9 @@ public class Converter {
 
 	public static void main(String[] args) throws IOException {
 		boolean cut = false;
-		boolean convert = true;
+		boolean convert = false;
 		boolean cutEmotion = false;
+		boolean merger = true;
 
 //		new Converter().convertEcg("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\ecg1551025613609.tsv", "C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\convertedEcg1551025613609.tsv");
 //		new Converter().convertMouse("mouse1554805722730.tsv", "convertedMouse1554805722730.tsv");
@@ -377,6 +379,13 @@ public class Converter {
 //			new Converter().cutEmotion(1556030269513L, 1556030342165L, folderName + "/task4", emotion);
 //			new Converter().cutEmotion(1556030385231L, 1556030829483L, folderName + "/task5", emotion);
 
+		}
+
+		if (merger) {
+			new Converter().merge("0010207/task1/convertedKeyboard1562074113195.tsv",
+					"C:\\Users\\DanyO\\Downloads\\OneDrive_2019-09-17\\Merge Data\\ECG_P0010207.csv", "output1.csv", 1);
+			new Converter().merge("0010207/task2/convertedKeyboard1562074175001.tsv",
+					"C:\\Users\\DanyO\\Downloads\\OneDrive_2019-09-17\\Merge Data\\ECG_P0010207.csv", "output2.csv", 2);
 		}
 	}
 
@@ -1010,6 +1019,97 @@ public class Converter {
 		br.close();
 		pw.close();
 		return true;
+	}
+
+	public boolean merge(String keyboard, String ecg, String output, int task) throws IOException {
+		// Declare variables
+		File keyboardFile = new File(keyboard);
+		File ecgFile = new File(ecg);
+		File outputFile = new File(output);
+		PrintWriter pw = new PrintWriter(new FileWriter(outputFile), true);
+		BufferedReader ecgBr = new BufferedReader(new FileReader(ecgFile));
+		BufferedReader keyboardBr = new BufferedReader(new FileReader(keyboardFile));
+		String fullLineKeyboard, fullLineEcg;
+		String[] splitLineKeyboard, splitLineEcg;
+		boolean loop = true;
+		long previousTimestamp;// = Long.parseLong(keyboardBr.readLine().split("\t")[0]);
+		long currTimestamp;
+		long ecgTimestamp;
+		int index = (task - 1) * 4;
+		ArrayList<String> keyboardArray = new ArrayList<String>();
+		ArrayList<String> ecgArray = new ArrayList<String>();
+
+		// ignore headers
+		keyboardBr.readLine();
+		ecgBr.readLine();
+
+		 // store in the array
+		while ((fullLineKeyboard = keyboardBr.readLine()) != null) {
+			keyboardArray.add(fullLineKeyboard);
+		}
+		while ((fullLineEcg = ecgBr.readLine()) != null) {
+			ecgArray.add(fullLineEcg);
+		}
+		
+		// search for the closest element
+		for (String i : ecgArray) {
+			long distance = 999999999L; //this number represents the maximum distance
+			long ecgTimestamp = Long.parseLong(i);
+			int closerElement = -1;
+			
+			for (String keyboardTimestamp : keyboardArray) {
+				if (Long.parseLong(keyboardTimestamp.split("\t")[0]);
+			}
+		}
+		
+			
+		//TODO:------------------------------------------------------------	
+			
+		// read first ecg timestamp
+		if ((fullLineEcg = ecgBr.readLine()) == null) {
+			loop = false;
+		}
+
+		while (((fullLineKeyboard = keyboardBr.readLine()) != null) && loop) {
+			splitLineKeyboard = fullLineKeyboard.split("\t");
+			splitLineEcg = fullLineEcg.split(",");
+
+			currTimestamp = Long.parseLong(splitLineKeyboard[0]);
+			ecgTimestamp = Long.parseLong(splitLineEcg[0 + index]);
+			if (!splitLineKeyboard[1].equals("keyUp")) {
+				continue;// ignore keyDown's
+			}
+
+			while (currTimestamp > ecgTimestamp) { // need to fetch another
+				if ((fullLineEcg = ecgBr.readLine()) != null) {
+					loop = false;
+					break;
+				}
+				ecgTimestamp = Long.parseLong(splitLineEcg[0 + index]);
+			}
+
+			if (!loop) { // Problem reading the line
+				break;
+			}
+
+			// Write on the file
+			pw.write(splitLineKeyboard[3]);
+			for (int i = 4; i <= 9; i++)
+				pw.write("," + splitLineKeyboard[i]);
+			for (int i = 1; i <= 3; i++)
+				pw.write("," + splitLineEcg[i + index]);
+			pw.write("\n");
+		}
+
+		pw.close();
+		ecgBr.close();
+		keyboardBr.close();
+		return true;
+	}
+
+	private void parseLong(String i) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
