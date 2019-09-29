@@ -6,12 +6,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -30,7 +30,8 @@ public class Converter {
 		boolean cut = false;
 		boolean convert = false;
 		boolean cutEmotion = false;
-		boolean merger = true;
+		boolean merger = false;
+		boolean zeroCleaner = false;
 
 //		new Converter().convertEcg("C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\ecg1551025613609.tsv", "C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\LoggersV0.05\\sync2\\convertedEcg1551025613609.tsv");
 //		new Converter().convertMouse("mouse1554805722730.tsv", "convertedMouse1554805722730.tsv");
@@ -386,11 +387,35 @@ public class Converter {
 		}
 
 		if (merger) {
-			new Converter().merge("0010207/task1/convertedKeyboard1562074113195.tsv",
-					"C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\dissert\\pratical\\ECG_P0010207.csv", "output1.csv", 1);
-			new Converter().merge("0010207/task2/convertedKeyboard1562074175001.tsv",
-					"C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\dissert\\pratical\\ECG_P0010207.csv", "output2.csv", 2);
+
+			String[] folders = new String[] { "0010207", "0010306", "0010307", "0010506", "0012506", "0020306",
+					"0072907" };
+
+			for (String folder : folders) { // folders
+				for (int j = 1; j <= numTasks; j++) { // task
+					new Converter().merge(folder + "/task" + j + "/" + findKeyboardFile(new File(folder + "/task" + j)),
+							"C:\\Users\\DanyO\\OneDrive\\Ambiente de Trabalho\\dissert\\pratical\\ECG_P" + folder
+									+ ".csv",
+							folder + "/task" + j + "/merged.csv", j);
+				}
+			}
 		}
+
+		if (zeroCleaner) {
+			String[] folders = new String[] { /*"0010207", "0010306",*/ "0010307", "0010506", "0012506", "0020306",
+					"0072907" };
+			for (int i = 0; i < folders.length; i++) {
+				folders[i] = "Data Organizar" + File.separator + folders[i];
+			}
+
+			for (String folder : folders) { // folders
+				for (int j = 1; j <= numTasks; j++) { // task
+					new Converter()
+							.removeNulls(folder + File.separator + "task" + j + File.separator + "merged_trab.csv");
+				}
+			}
+		}
+
 	}
 
 	public boolean convertEcg(String ecgFileName, String targetFileName) throws IOException {
@@ -818,6 +843,17 @@ public class Converter {
 		return true;
 	}
 
+	public static String findKeyboardFile(File folder) {
+		for (File f : folder.listFiles()) {
+			String fileName = f.getName();
+
+			if (fileName.startsWith("convertedKeyboard")) {
+				return fileName;
+			}
+		}
+		return null;
+	}
+
 	public boolean cutEmotion(long cutTimestampStart, long cutTimestampEnd, String newFolderName, File emotion)
 			throws IOException {
 		BufferedReader br;
@@ -913,7 +949,6 @@ public class Converter {
 		br = new BufferedReader(new FileReader(input));
 
 		File output = new File(targetFileName);
-		// output.getParentFile().mkdirs();
 		if (output.createNewFile() == false) {
 			System.err.println("File already exists, exiting...");
 			br.close();
@@ -1030,6 +1065,9 @@ public class Converter {
 		File keyboardFile = new File(keyboard);
 		File ecgFile = new File(ecg);
 		File outputFile = new File(output);
+		if (outputFile.exists()) {
+			outputFile.delete();
+		}
 		PrintWriter pw = new PrintWriter(new FileWriter(outputFile), true);
 		BufferedReader ecgBr = new BufferedReader(new FileReader(ecgFile));
 		BufferedReader keyboardBr = new BufferedReader(new FileReader(keyboardFile));
@@ -1050,20 +1088,31 @@ public class Converter {
 
 		// store in the array
 		while ((fullLineKeyboard = keyboardBr.readLine()) != null) {
-			keyboardArray.add(fullLineKeyboard);
+			if (fullLineKeyboard.split("\t")[1].equals("keyUp")) {
+				keyboardArray.add(fullLineKeyboard);
+			}
 		}
 		while ((fullLineEcg = ecgBr.readLine()) != null) {
-			ecgArray.add(fullLineEcg);
+			if (!fullLineEcg.equals("")) {
+				ecgArray.add(fullLineEcg);
+			} else {
+				continue;
+			}
 		}
 
 		// search for the closest element and save on the hashmap
 		for (String i : ecgArray) {
-			long distance = 999999999L; // this number represents the maximum distance
-			currTimestamp = Long.parseLong(i.split(",")[0 + index]);
+			long distance = 999999999999L; // this number represents the maximum distance
+			try {
+				currTimestamp = Long.parseLong(i.split(",", -1)[0 + index]);
+			} catch (java.lang.NumberFormatException e) {
+				break;// its not a bug, it simply means the end of file ON THAT SPECIFIC COLUMN OF THE
+						// TASK has been reached
+			}
 			int closerElement = -1;
 
 			for (int j = 0; j < keyboardArray.size(); j++) {
-				keyboardTimestamp = Long.parseLong(keyboardArray.get(j).split("\t")[0 + index]);
+				keyboardTimestamp = Long.parseLong(keyboardArray.get(j).split("\t")[0]);
 				if (Math.abs(currTimestamp - keyboardTimestamp) < distance) {
 					closerElement = j;
 					previousTimestamp = keyboardTimestamp;
@@ -1091,12 +1140,22 @@ public class Converter {
 		for (int i = 0; i < keyboardArray.size(); i++) {
 			splitLineKeyboard = keyboardArray.get(i).split("\t");
 			splitLineEcg = convertMultipleLines(map.get(i));
-			
-			pw.write(splitLineKeyboard[3]);
-			for (int j = 4; j <= 9; j++)
-				pw.write("," + splitLineKeyboard[j]);
-			for (int j = 1; j <= 3; j++)
-				pw.write("," + splitLineEcg[j + index]);
+
+			if (!splitLineKeyboard[3].equals("0")) {
+				pw.write(splitLineKeyboard[3]);
+			}
+			for (int j = 4; j <= 9; j++) {
+				pw.write(",");
+				if (!splitLineKeyboard[j].equals("0")) {
+					pw.write(splitLineKeyboard[j]);
+				}
+			}
+			for (int j = 1; j <= 3; j++) {
+				pw.write(",");
+				if (!splitLineEcg[j + index].equals("0")) {
+					pw.write(splitLineEcg[j + index]);
+				}
+			}
 			pw.write("\n");
 		}
 
@@ -1106,36 +1165,115 @@ public class Converter {
 		return true;
 	}
 
+	public void removeNulls(String fileName) throws IOException {
+		PrintWriter pw;
+		BufferedReader br;
+		int colNumber = 4;
+
+		File output = new File(fileName);
+		File backup = new File(output.getParent() + File.separator + "backup_" + output.getName());
+		Files.move(output.toPath(), backup.toPath());
+		br = new BufferedReader(new FileReader(backup));
+
+		
+		output.delete();
+		if (output.createNewFile() == false) {
+			System.err.println("File already exists, exiting...");
+			br.close();
+			return;
+		}
+		pw = new PrintWriter(new FileWriter(output), true);
+
+		String fullLine;
+		String[] splitLine;
+		boolean loop = true;
+		boolean firstCol = true;
+
+		// First Line
+		fullLine = br.readLine();
+		splitLine = fullLine.split(",");
+		for (int i = 0; i < colNumber; i++) {
+			if (firstCol) {
+				if ((splitLine.length <= i) || (splitLine[i] == null)) {
+					pw.write(0);
+				} else {
+					pw.write(splitLine[i]);
+				}
+				firstCol = false;
+			} else {
+				if ((splitLine.length <= i) || (splitLine[i] == null)) {
+					pw.write("," + 0);
+				} else {
+					pw.write("," + splitLine[i]);
+				}
+			}
+		}
+
+		while (loop) {
+			fullLine = br.readLine();
+			if (fullLine == null || fullLine.isEmpty() || fullLine.equals("")) {
+				loop = false;
+			} else {
+				firstCol = true;
+
+				splitLine = fullLine.split(",");
+				for (int i = 0; i < colNumber; i++) {
+					if (firstCol) {
+						if ((splitLine.length <= i) || (splitLine[i] == null)) {
+							pw.write("\n" + 0);
+						} else {
+							pw.write("\n" + splitLine[i]);
+						}
+						firstCol = false;
+					} else {
+						if ((splitLine.length <= i) || (splitLine[i] == null)) {
+							pw.write("," + 0);
+						} else {
+							pw.write("," + splitLine[i]);
+						}
+					}
+				}
+			}
+		}
+
+		pw.close();
+		br.close();
+	}
+
 	/**
-	 * Makes averages
+	 * Makes averages and merges multiple lines into one
+	 * 
 	 * @param list
 	 * @return
 	 */
-	private String[] convertMultipleLines (ArrayList<String> list) {
-		if (list.isEmpty()) {
+	private String[] convertMultipleLines(ArrayList<String> list) {
+		if (list == null || list.isEmpty()) {
 			String[] split = new String[20];
 			Arrays.fill(split, "");
 			return split;
 		}
 		double[] split = new double[20];
-		
+
 		for (String line : list) {
 			String[] splitLine = line.split(",");
-			for (int i = 0; i < splitLine.length; i++) { //calc average
-				split[i] += Double.parseDouble(splitLine[i])/list.size();
+			for (int i = 0; i < splitLine.length; i++) { // calc average
+				try {
+					split[i] += Double.parseDouble(splitLine[i]) / list.size();
+				} catch (NumberFormatException e) {
+				}
 			}
 		}
-		
+
 		return doubleToStringArray(split);
 	}
 
-	private String[] doubleToStringArray (double[] array) {
+	private String[] doubleToStringArray(double[] array) {
 		String[] result = new String[array.length];
-		
+
 		for (int i = 0; i < result.length; i++) {
 			result[i] = Double.toString(array[i]);
 		}
-		
+
 		return result;
 	}
 
